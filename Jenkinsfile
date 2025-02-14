@@ -27,17 +27,17 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // No dir parameter at all
-                        sh 'pwd'
-                        sh 'ls -al'
-                        sh 'echo "Running tests in default directory (Dockerfile WORKDIR?)"'
-                    }
-                }
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         script {
+        //             docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // No dir parameter at all
+        //                 sh 'pwd'
+        //                 sh 'ls -al'
+        //                 sh 'echo "Running tests in default directory (Dockerfile WORKDIR?)"'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Push Image to Docker Hub') {
             when {
