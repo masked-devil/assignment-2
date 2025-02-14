@@ -30,10 +30,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // Basic inside() call - no dir parameter
+                    docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside(dir: '/app') {
                         sh 'pwd'
                         sh 'ls -al'
-                        sh 'echo "Inside Docker Container!"' // Simple test command
+                        sh 'echo "Running tests in /app directory"' // Clear message
                     }
                 }
             }
