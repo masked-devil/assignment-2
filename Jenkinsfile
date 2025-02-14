@@ -51,17 +51,17 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy Application') {
-            // when {
-            //     expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
-            // }
+            when {
+                expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
+            }
             steps {
                 script {
                     sh """
                         mkdir -p ${REMOTE_DEPLOY_PATH}  # Create deploy path if it doesn't exist locally
+                        cp ${WORKSPACE}/${COMPOSE_FILE_NAME} ${REMOTE_DEPLOY_PATH}/${COMPOSE_FILE_NAME} # Copy docker-compose.yml
                         cd ${REMOTE_DEPLOY_PATH}
-                        docker-compose pull # Still good practice to pull, though image may already be locally available
+                        docker-compose pull
                         docker-compose up -d
                         echo "Application deployed locally on Jenkins agent successfully!"
                     """
