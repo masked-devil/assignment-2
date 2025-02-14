@@ -22,8 +22,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'echo "Building Image"'
-                    // dockerImage = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
                 }
             }
         }
@@ -31,37 +30,48 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // No dir parameter at all
-                        sh 'echo "Running tests"'
+                    docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside {
+                        sh 'pip install -r requirements.txt' // Install app dependencies (adjust if needed)
+                        sh 'pytest'                         // Run your unit tests (adjust command if needed)
                     }
-                }
-        }
-
-        stage('Push Image to Docker Hub') {
-            // when {
-            //     expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
-            // }
-            steps {
-                script {
-                    // docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') { // Replace with your Docker Hub credentials ID
-                    //     dockerImage.push()
-                    // }
-                    sh 'echo "Running tests"'
                 }
             }
         }
-        stage('Deploy Application') {
+
+        stage('Push Image to Docker Hub') {
+            when {
+                expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
+            }
             steps {
                 script {
-                    sh """
-                        echo "Application deployed successfully!"
-                    """
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') { // Replace with your Docker Hub credentials ID
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            when {
+                expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
+            }
+            steps {
+                script {
+                    sshagent (credentials: ['remote-server-credentials-id']) { // Replace with your remote server SSH credentials ID
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${REMOTE_SERVER_USERNAME}@${REMOTE_SERVER_HOST} << EOF
+                                cd ${REMOTE_DEPLOY_PATH}
+                                docker-compose pull
+                                docker-compose up -d
+                                echo "Application deployed successfully!"
+                            EOF
+                        """
+                    }
                 }
             }
         }
     }
-
-
+    
     post {
         always {
             cleanWs() // Clean workspace after each build
@@ -75,5 +85,4 @@ pipeline {
             // Add success notifications here if needed
         }
     }
-
 }
