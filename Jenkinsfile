@@ -52,9 +52,9 @@ pipeline {
             }
         }
         stage('Deploy Application') {
-            when {
-                expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
-            }
+            // when {
+            //     expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
+            // }
             steps {
                 script {
                     sh """
