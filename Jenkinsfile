@@ -2,20 +2,19 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REGISTRY = "maskeddevil"  // Replace with your Docker Hub username
-        DOCKER_IMAGE_NAME = "assignment-2"              // Replace with your desired image name
-        DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"         // Using Jenkins build number as tag, can be Git commit hash too
-        // Removed REMOTE_SERVER_* variables as deploying locally
-        REMOTE_DEPLOY_PATH = "/tmp/assignment-2-deploy"      // Path on the Jenkins agent where you deploy (e.g., /tmp/flask-app-deploy, can be adjusted)
-        COMPOSE_FILE_NAME = "docker-compose.yml"   // Name of your docker-compose file in the repo
+        DOCKER_REGISTRY = "maskeddevil"  //Docker Hub username
+        DOCKER_IMAGE_NAME = "assignment-2"              //image name
+        DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"         // Using Jenkins build number as tag
+        REMOTE_DEPLOY_PATH = "/tmp/assignment-2-deploy"      // Path  where you deploy 
+        COMPOSE_FILE_NAME = "docker-compose.yml"   // Name of docker-compose file in the repo
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git credentialsId: 'git-credentials-id',  // Replace with your Git credentials ID in Jenkins
-                    url: 'https://github.com/masked-devil/assignment-2',        // Replace with your Git repository URL
-                    branch: 'main'                         // Or your desired branch
+                git credentialsId: 'git-credentials-id',  //Git credentials ID in Jenkins
+                    url: 'https://github.com/masked-devil/assignment-2',        //Git repository URL
+                    branch: 'main'                         // Branch
             }
         }
 
@@ -44,7 +43,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') { // Replace with your Docker Hub credentials ID
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') { //Docker Hub credentials ID
                         dockerImage.push()
                     }
                 }
@@ -57,7 +56,7 @@ pipeline {
             }
             steps {
                 script {
-                    sshagent (credentials: ['remote-server-credentials-id']) { // Replace with your remote server SSH credentials ID
+                    sshagent (credentials: ['remote-server-credentials-id']) { //remote server SSH credentials ID
                         sh """
                             ssh -o StrictHostKeyChecking=no ${REMOTE_SERVER_USERNAME}@${REMOTE_SERVER_HOST} << EOF
                                 cd ${REMOTE_DEPLOY_PATH}
@@ -71,18 +70,18 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
             cleanWs() // Clean workspace after each build
         }
         failure {
             echo 'Pipeline failed :('
-            // Add failure notifications here (email, Slack, etc.) if needed
+
         }
         success {
             echo 'Pipeline completed successfully!'
-            // Add success notifications here if needed
+
         }
     }
 }
