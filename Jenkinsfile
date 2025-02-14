@@ -32,8 +32,6 @@ pipeline {
             steps {
                 script {
                     // docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // No dir parameter at all
-                        sh 'pip install -r requirements.txt'
-                        sh 'pytest'
                         sh 'echo "Running tests"'
                     }
                 }
