@@ -27,17 +27,17 @@ pipeline {
             }
         }
 
-        // stage('Run Tests') {
-        //     steps {
-        //         script {
-        //             docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // No dir parameter at all
-        //                 sh 'pwd'
-        //                 sh 'ls -al'
-        //                 sh 'echo "Running tests in default directory (Dockerfile WORKDIR?)"'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Run Tests') {
+            steps {
+                script {
+                    // docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // No dir parameter at all
+                        sh 'pip install -r requirements.txt'
+                        sh 'pytest'
+                        sh 'echo "Running tests"'
+                    }
+                }
+            }
+        }
 
         stage('Push Image to Docker Hub') {
             // when {
@@ -52,19 +52,10 @@ pipeline {
             }
         }
         stage('Deploy Application') {
-            // when {
-            //     expression { return currentBuild.result == 'SUCCESS' }
-            // }
             steps {
                 script {
                     sh """
-                        mkdir -p ${REMOTE_DEPLOY_PATH}
-                        WORKSPACE_UNIX_PATH=$(cygpath -u "${WORKSPACE}")  # Convert workspace path to Unix style
-                        cp "\${WORKSPACE_UNIX_PATH}/${COMPOSE_FILE_NAME}" "${REMOTE_DEPLOY_PATH}/${COMPOSE_FILE_NAME}" # Use converted path
-                        cd ${REMOTE_DEPLOY_PATH}
-                        docker-compose pull
-                        docker-compose up -d
-                        echo "Application deployed locally on Jenkins agent successfully!"
+                        echo "Application deployed successfully!"
                     """
                 }
             }
