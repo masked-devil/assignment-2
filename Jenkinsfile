@@ -37,7 +37,6 @@ pipeline {
                         sh 'echo "Running tests"'
                     }
                 }
-            }
         }
 
         stage('Push Image to Docker Hub') {
@@ -64,6 +63,7 @@ pipeline {
         }
     }
 
+
     post {
         always {
             cleanWs() // Clean workspace after each build
@@ -77,4 +77,5 @@ pipeline {
             // Add success notifications here if needed
         }
     }
+
 }
