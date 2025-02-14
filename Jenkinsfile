@@ -31,6 +31,8 @@ pipeline {
             steps {
                 script {
                     docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside {
+                        sh 'pwd' // Add this to see the current working directory inside the container
+                        sh 'ls -al' // List files in the current working directory
                         sh 'pip install -r requirements.txt' // Install app dependencies (adjust if needed)
                         sh 'pytest'                         // Run your unit tests (adjust command if needed)
                     }
