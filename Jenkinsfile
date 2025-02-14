@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        // DOCKER_REGISTRY = "maskeddevil"  // Replace with your Docker Hub username
-        // DOCKER_IMAGE_NAME = "assignment-2"              // Replace with your desired image name
-        // DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"         // Using Jenkins build number as tag, can be Git commit hash too
-        // // Removed REMOTE_SERVER_* variables as deploying locally
-        // REMOTE_DEPLOY_PATH = "/tmp/assignment-2-deploy"      // Path on the Jenkins agent where you deploy (e.g., /tmp/flask-app-deploy, can be adjusted)
-        // COMPOSE_FILE_NAME = "docker-compose.yml"   // Name of your docker-compose file in the repo
+        DOCKER_REGISTRY = "maskeddevil"  // Replace with your Docker Hub username
+        DOCKER_IMAGE_NAME = "assignment-2"              // Replace with your desired image name
+        DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"         // Using Jenkins build number as tag, can be Git commit hash too
+        // Removed REMOTE_SERVER_* variables as deploying locally
+        REMOTE_DEPLOY_PATH = "/tmp/assignment-2-deploy"      // Path on the Jenkins agent where you deploy (e.g., /tmp/flask-app-deploy, can be adjusted)
+        COMPOSE_FILE_NAME = "docker-compose.yml"   // Name of your docker-compose file in the repo
     }
 
     stages {
