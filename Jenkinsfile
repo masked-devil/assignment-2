@@ -52,9 +52,9 @@ pipeline {
             }
         }
         stage('Deploy Application') {
-            when {
-                expression { return currentBuild.result == 'SUCCESS' }
-            }
+            // when {
+            //     expression { return currentBuild.result == 'SUCCESS' }
+            // }
             steps {
                 script {
                     sh """
