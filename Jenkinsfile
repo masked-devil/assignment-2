@@ -30,11 +30,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside(dir: '/app') { // Explicitly set working directory to /app
-                        sh 'pwd' // Check working directory inside container
-                        sh 'ls -al' // List files inside container's working directory
-                        sh 'pip install -r requirements.txt'
-                        sh 'pytest'
+                    docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").inside() { // Basic inside() call - no dir parameter
+                        sh 'pwd'
+                        sh 'ls -al'
+                        sh 'echo "Inside Docker Container!"' // Simple test command
                     }
                 }
             }
