@@ -52,14 +52,15 @@ pipeline {
             }
         }
         stage('Deploy Application') {
-            // when {
-            //     expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
-            // }
+            when {
+                expression { return currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
                     sh """
-                        mkdir -p ${REMOTE_DEPLOY_PATH}  # Create deploy path if it doesn't exist locally
-                        cp ${WORKSPACE}/${COMPOSE_FILE_NAME} ${REMOTE_DEPLOY_PATH}/${COMPOSE_FILE_NAME} # Copy docker-compose.yml
+                        mkdir -p ${REMOTE_DEPLOY_PATH}
+                        WORKSPACE_UNIX_PATH=$(cygpath -u "${WORKSPACE}")  # Convert workspace path to Unix style
+                        cp "\${WORKSPACE_UNIX_PATH}/${COMPOSE_FILE_NAME}" "${REMOTE_DEPLOY_PATH}/${COMPOSE_FILE_NAME}" # Use converted path
                         cd ${REMOTE_DEPLOY_PATH}
                         docker-compose pull
                         docker-compose up -d
