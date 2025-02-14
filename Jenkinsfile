@@ -40,9 +40,9 @@ pipeline {
         // }
 
         stage('Push Image to Docker Hub') {
-            when {
-                expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
-            }
+            // when {
+            //     expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
+            // }
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') { // Replace with your Docker Hub credentials ID
@@ -53,9 +53,9 @@ pipeline {
         }
 
         stage('Deploy Application') {
-            when {
-                expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
-            }
+            // when {
+            //     expression { return currentBuild.result == 'SUCCESS' } // Only run if previous stages were successful
+            // }
             steps {
                 script {
                     sh """
